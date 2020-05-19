@@ -59,7 +59,6 @@ public class JDBCDataSetGenerator implements DataSetGenerator {
 	
 	@Override
 	public DataSet generate(String sql) {
-		
 		DataSet data = new DataSet();
 		SqlRowSet dbRow = jdbcTemplate.queryForRowSet(sql);
 		SqlRowSetMetaData metaData = dbRow.getMetaData();
@@ -144,13 +143,12 @@ public class JDBCDataSetGenerator implements DataSetGenerator {
 			data.add(row);
 			++rowsDone;
 		}
-		updateProgress();
 		timer.cancel();
+		updateProgress();
 		return data;
 	}
 
 	public class UpdateProgressTask extends TimerTask {
-		
 		@Override
 		public void run() {
 			updateProgress();

@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 import io.cronox.delta.helpers.shellHelpers.ProgressCounter;
 
 @Component
+//@Scope("prototype")
 public class LoadingObserver implements PropertyChangeListener {
 
 	@Autowired
 	ProgressCounter progressCounter;
-	
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if((int)evt.getOldValue() == 0) 
+		if ((int) evt.getOldValue() == 0)
 			progressCounter.reset();
-		else 
-			progressCounter.display((int)evt.getNewValue(), "Getting data from Data Source..");
+		progressCounter.display((int) evt.getNewValue(), "Getting data from Data Source..");
 	}
 }

@@ -4,5 +4,5 @@ import io.cronox.delta.comparators.DataSetComparator;
 
 public interface ResultGenerator {
 	
-	public void generate(DataSetComparator comp, String path); 
+	public String generate(DataSetComparator comp, String path); 
 }

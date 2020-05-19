@@ -1,7 +1,6 @@
 package io.cronox.delta.repository;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -16,7 +15,7 @@ import io.cronox.delta.models.Connections;
 
 public class GenericConnectionRepository<T extends DataSourceConnection> implements ConnectionRepository<T, String> {
 
-	private Connections<T> connections = new Connections<T> ();
+	private Connections<T> connections = new Connections<T>();
 
 	private JAXBContext jaxbContext = null;
 	private Marshaller jaxbMarshaller = null;
@@ -33,11 +32,7 @@ public class GenericConnectionRepository<T extends DataSourceConnection> impleme
 
 		this.connectionXml = connectionXml;
 
-		try {
-			this.connections = ((Connections<T>) jaxbUnmarshaller.unmarshal(connectionXml));
-		} catch (JAXBException e) {
-			this.connections.setConnections(new ArrayList<T>());
-		}
+		this.connections = ((Connections<T>) jaxbUnmarshaller.unmarshal(connectionXml));
 
 	}
 

@@ -1,5 +1,6 @@
 package io.cronox.delta.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -15,5 +16,5 @@ import lombok.Data;
 public class Connections<T> {
 	
 	@XmlElement(name = "connection")
-	List<T> connections;
+	List<T> connections = new ArrayList<T>();
 }

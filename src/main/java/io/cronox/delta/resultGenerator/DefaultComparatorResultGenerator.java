@@ -16,15 +16,14 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
 	CsvHelpers csvHelpers;
 	
 	@Override
-	public void generate(DataSetComparator comp, String path) {
-		
+	public String generate(DataSetComparator comp, String path) {
 		File f = Paths.get(path).toAbsolutePath().toFile();
 		if(!f.exists()) {
 			f.mkdirs();
-		}
-		
+		}	
 		csvHelpers.datasetToCsv(comp.getMatched(), new File(f,"matched.csv"));
 		csvHelpers.datasetToCsv(comp.getSet1(), new File(f,"Source_Mismatch.csv"));
 		csvHelpers.datasetToCsv(comp.getSet2(), new File(f,"Target_Mismatch.csv"));
+		return f.getAbsolutePath();
 	}
 }

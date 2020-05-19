@@ -64,6 +64,7 @@ public class JDBCDataSourceConnection implements DataSourceConnection {
 		if(!this.testConnection()) {
 			throw new ConnectionFailedException(id);
 		}
+		
 		return new JDBCDataSetGenerator(factory, getJdbcTemplate());
 	}
 	

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import io.cronox.delta.helpers.shellHelpers.ProgressBar;
 
 @Component
+//@Scope("prototype")
 public class ProgressObserver implements PropertyChangeListener {
 
 	@Autowired

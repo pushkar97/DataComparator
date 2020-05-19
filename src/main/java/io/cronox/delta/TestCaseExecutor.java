@@ -36,27 +36,31 @@ public class TestCaseExecutor {
 	}
 	
 	public String execute() {
-		comparer.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
-		comparer.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
 		getSourceDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
+		comparer.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
+		
 		getTargetDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
+		comparer.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
 		comparer.subscribe(BeanUtil.getBean(ProgressObserver.class));
-		helper.printInfo("Unique Rows");
-		helper.printInfo("Source : "+comparer.getSet1().getDataSet().size());
-		helper.printInfo("Target : "+comparer.getSet2().getDataSet().size());
-		helper.printInfo("Duplicates");
-		helper.printInfo("Source : "+comparer.getSet1().getDuplicates().size());
-		helper.printInfo("Target : "+comparer.getSet2().getDuplicates().size());
+		helper.print("");
+		helper.print("Unique Rows");
+		helper.printInfo("\tSource : "+comparer.getSet1().getDataSet().size());
+		helper.printInfo("\tTarget : "+comparer.getSet2().getDataSet().size());
+		helper.print("");
+		helper.print("Duplicates");
+		helper.printWarning("\tSource : "+comparer.getSet1().getDuplicates().size());
+		helper.printWarning("\tTarget : "+comparer.getSet2().getDuplicates().size());
+		helper.print("");
 		comparer.compare();
-		helper.printInfo("Matched : "+comparer.getMatched().size());
-		helper.printInfo("");
-		helper.printInfo("Mismatched");
-		helper.printInfo("Source : "+comparer.getSet1().getDataSet().size());
-		helper.printInfo("Target : "+comparer.getSet2().getDataSet().size());
+		helper.print("");
+		helper.printSuccess("Matched : "+comparer.getMatched().size());
+		helper.print("");
+		helper.print("Mismatched");
+		helper.printError("\tSource : "+comparer.getSet1().getDataSet().size());
+		helper.printError("\tTarget : "+comparer.getSet2().getDataSet().size());
 		ResultGenerator generator = BeanUtil.getBean(comparer.getResultGenerator());
 		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-		generator.generate(comparer, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
-		return path;
+		return generator.generate(comparer, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
 	}
 	
 	public CellFactory getFactory() {
@@ -64,15 +68,15 @@ public class TestCaseExecutor {
 	}
 	
 	public DataSetGenerator  getSourceDataSetGenerator() {
-		if(sourceDataSetGenerator == null) {
-			sourceDataSetGenerator = test.getSourceConnection().getDataSetGenerator(factory);
+		if(this.sourceDataSetGenerator == null) {
+			this.sourceDataSetGenerator = test.getSourceConnection().getDataSetGenerator(factory);
 		}
 		return this.sourceDataSetGenerator;
 	}
 	
 	public DataSetGenerator getTargetDataSetGenerator() {
-		if(targetDataSetGenerator == null) {
-			targetDataSetGenerator = test.getTargetConnection().getDataSetGenerator(factory);
+		if(this.targetDataSetGenerator == null) {
+			this.targetDataSetGenerator = test.getTargetConnection().getDataSetGenerator(factory);
 		}
 		return this.targetDataSetGenerator;
 	}

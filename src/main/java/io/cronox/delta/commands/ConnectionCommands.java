@@ -68,7 +68,7 @@ public class ConnectionCommands {
 			helper.printError("Unknown error occurred while saving connection. please refer below stacktrace");
 			e.printStackTrace();
 		}
-		return helper.getSuccessMessage(String.format("Connection %s Successfully added", id));
+		return helper.getSuccessMessage(String.format("Connection %s Successfully Saved", id));
 	}
 	
 	@ShellMethod(value = "Add new Excel connection to connections list")

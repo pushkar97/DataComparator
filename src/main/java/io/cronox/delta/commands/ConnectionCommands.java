@@ -56,9 +56,11 @@ public class ConnectionCommands {
 		conn.setUsername(inputReader.prompt("Username",""));
 		conn.setPassword(inputReader.prompt("Password","",false));
 		
+		helper.printInfo("Testing Connection...");
 		if(!conn.testConnection()) {
 			return helper.getErrorMessage("Connection Test failed! Make sure entered data is correct and server is running.");
 		}
+		helper.printSuccess("Connection test successful");
 		connections.add(conn);
 		try {
 			connections.save();
@@ -86,9 +88,11 @@ public class ConnectionCommands {
             }
         } while (conn.getUrl() == null);
 		
+		helper.printInfo("Testing Connection...");
 		if(!conn.testConnection()) {
 			return helper.getErrorMessage("Connection Test failed! Make sure entered data is correct and File is present.");
 		}
+		helper.printSuccess("Connection test successful");
 		connections.add(conn);
 		try {
 			connections.save();
@@ -96,7 +100,7 @@ public class ConnectionCommands {
 			helper.printError("Unknown error occurred while saving connection. please refer below stacktrace");
 			e.printStackTrace();
 		}
-		return helper.getSuccessMessage(String.format("Connection %s Successfully added", id));
+		return helper.getSuccessMessage(String.format("Connection %s Successfully Saved", id));
 	}
 
 	@ShellMethod(value = "Lists all available connections")

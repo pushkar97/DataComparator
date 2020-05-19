@@ -28,14 +28,12 @@ public class CsvHelpers {
 	}
 
 	public void datasetToCsv(DataSet data, File file) {
-//		logger.info("Writing CSV data to {}", path);
 		CSVWriter writer = null;
 		try {
 			writer = new CSVWriter(new FileWriter(file));
 			// set headers
 			writer.writeNext(data.getHeader().stream().map(c -> c.toString()).toArray(String[]::new));
 
-			// write data
 			for (Row array : data.getDataSet()) {
 				writer.writeNext(array.stream().map(c -> c.toString()).toArray(String[]::new));
 			}

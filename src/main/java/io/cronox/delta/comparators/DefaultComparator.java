@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import io.cronox.delta.data.DataSet;
 import io.cronox.delta.data.Row;
 import io.cronox.delta.exceptions.ComparisonException;
+import io.cronox.delta.exceptions.ComparisonLimitExceededException;
 import io.cronox.delta.resultGenerator.DefaultComparatorResultGenerator;
 
 public class DefaultComparator implements DataSetComparator {
@@ -45,7 +46,7 @@ public class DefaultComparator implements DataSetComparator {
 	}
 	
 	@Override
-	public void compare() {
+	public void compare() throws ComparisonLimitExceededException {
 		// check if empty
 		if (set1.getDataSet().size() == 0)
 			throw new ComparisonException("Set 1 is Empty");
@@ -55,7 +56,7 @@ public class DefaultComparator implements DataSetComparator {
 		// check column count
 		if (set1.getHeader().size() != set2.getHeader().size())
 			throw new ComparisonException(
-					"Column count did not match, Make sure number of columns in both datasets is same");
+					"Column count did not match, Make sure number of columns in both datasets are same");
 
 		Iterator<Row> set1I = set1.getDataSet().iterator();
 		Iterator<Row> set2I = set2.getDataSet().iterator();
@@ -91,8 +92,8 @@ public class DefaultComparator implements DataSetComparator {
 				set1R = set1I.next();
 				
 				if(limit > 0 && ++set1MismatchCount >= limit)
-					throw new ComparisonException(
-							"Too Many mismatches in set 1 : "+ set1MismatchCount);
+					throw new ComparisonLimitExceededException(
+							"Too Many mismatches in source : "+ set1MismatchCount);
 			}
 
 			if (result > 0) {
@@ -101,7 +102,7 @@ public class DefaultComparator implements DataSetComparator {
 					break;
 				set2R = set2I.next();
 				if(limit > 0 && ++set2MismatchCount >= limit)
-					throw new ComparisonException("Too Many mismatches in set 2 : "+ set2MismatchCount);
+					throw new ComparisonLimitExceededException("Too Many mismatches in target : "+ set2MismatchCount);
 			}
 			updateProgress();
 		}

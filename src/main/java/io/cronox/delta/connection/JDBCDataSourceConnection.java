@@ -85,6 +85,7 @@ public class JDBCDataSourceConnection implements DataSourceConnection {
 		}
 		return template;
 	}
+	
 	@Override
 	public boolean testConnection() {
 		try {

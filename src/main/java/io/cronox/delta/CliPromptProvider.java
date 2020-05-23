@@ -11,7 +11,7 @@ public class CliPromptProvider implements PromptProvider {
     @Override
     public AttributedString getPrompt() {
         return new AttributedString("Delta:>", 
-            AttributedStyle.DEFAULT.foreground(AttributedStyle.BRIGHT)
+            AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA)
         );
     }
 }

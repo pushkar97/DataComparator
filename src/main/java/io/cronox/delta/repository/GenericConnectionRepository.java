@@ -8,6 +8,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.cronox.delta.connection.DataSourceConnection;
 import io.cronox.delta.exceptions.ConnectionAlreadyExistsException;
 import io.cronox.delta.exceptions.ConnectionNotFoundException;
@@ -15,6 +18,8 @@ import io.cronox.delta.models.Connections;
 
 public class GenericConnectionRepository<T extends DataSourceConnection> implements ConnectionRepository<T, String> {
 
+	Logger logger = LoggerFactory.getLogger(GenericConnectionRepository.class);
+	
 	private Connections<T> connections = new Connections<T>();
 
 	private JAXBContext jaxbContext = null;
@@ -31,9 +36,11 @@ public class GenericConnectionRepository<T extends DataSourceConnection> impleme
 		jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
 		this.connectionXml = connectionXml;
-
-		this.connections = ((Connections<T>) jaxbUnmarshaller.unmarshal(connectionXml));
-
+		try {
+			this.connections = ((Connections<T>) jaxbUnmarshaller.unmarshal(connectionXml));
+		}catch(Exception e) {
+			logger.info("Connection file not Found or invalid, creating new file. : {}",connectionXml.getAbsolutePath());
+		}
 	}
 
 	@Override

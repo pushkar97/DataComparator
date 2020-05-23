@@ -102,7 +102,8 @@ public class DefaultComparator implements DataSetComparator {
 					break;
 				set2R = set2I.next();
 				if(limit > 0 && ++set2MismatchCount >= limit)
-					throw new ComparisonLimitExceededException("Too Many mismatches in target : "+ set2MismatchCount);
+					throw new ComparisonLimitExceededException(
+							"Too Many mismatches in target : "+ set2MismatchCount);
 			}
 			updateProgress();
 		}

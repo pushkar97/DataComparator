@@ -92,6 +92,7 @@ public class JDBCDataSourceConnection implements DataSourceConnection {
 			this.getDataSource().getConnection().close();
 			return true;
 		}catch(SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

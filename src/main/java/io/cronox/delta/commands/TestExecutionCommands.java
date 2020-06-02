@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
-import io.cronox.delta.TestCaseExecutor;
 import io.cronox.delta.comparators.DefaultComparator;
 import io.cronox.delta.helpers.shellHelpers.InputReader;
 import io.cronox.delta.helpers.shellHelpers.ShellHelper;
@@ -12,6 +11,7 @@ import io.cronox.delta.models.TestCase;
 import io.cronox.delta.observers.LoadingObserver;
 import io.cronox.delta.observers.ProgressObserver;
 import io.cronox.delta.repository.Connections;
+import io.cronox.delta.testExecutors.TestCaseExecutor;
 
 @ShellComponent
 public class TestExecutionCommands {

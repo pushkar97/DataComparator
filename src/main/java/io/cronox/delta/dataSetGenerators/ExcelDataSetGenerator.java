@@ -61,7 +61,7 @@ public class ExcelDataSetGenerator implements DataSetGenerator {
 			Row row = new Row();
 			r.forEach(c -> {
 				if(c == null) {
-					row.add(NullCell.getCell());
+					row.add(builder.getNullCell());
 				}
 				if (c instanceof Double) {
 					row.add(new DoubleCell((double) c));

@@ -53,16 +53,6 @@
 			<artifactId>opencsv</artifactId>
 			<version>4.1</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-		<!-- <dependency> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId> 
-			</dependency> -->
-		<!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
-		<!--<dependency> <groupId>com.microsoft.sqlserver</groupId> <artifactId>mssql-jdbc</artifactId> 
-			<version>8.2.2.jre8</version> </dependency> -->
-
-		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-		<!--<dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
-			<version>42.2.12</version> </dependency> -->
 	</dependencies>
 
 	<build>

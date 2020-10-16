@@ -1,11 +1,16 @@
 package io.cronox.delta.data.cellTypes;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class NullCell implements Cell {
 
-	private static NullCell value = new NullCell();
-	
-	private NullCell() {}
-	
+	@Value("${data.null.string:abc}")
+	private String nullString;
+
+	public NullCell() { }
+
 	public int compareTo(NullCell o) {
 		return 0;
 	}
@@ -16,20 +21,13 @@ public class NullCell implements Cell {
 		
 		return this.toString().compareTo(o.toString());
 	}
-
-	public static NullCell getCell() {
-		// TODO Auto-generated method stub
-		return value;
-	}
 	
 	public String toString() {
-		return "{null}";
+		return nullString;
 	}
 
 	@Override
 	public Object getValue() {
-		// TODO Auto-generated method stub
-		return value;
+		return this;
 	}
-
 }

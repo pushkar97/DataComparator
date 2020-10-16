@@ -3,6 +3,7 @@ package io.cronox.delta.data;
 import java.util.Map;
 import java.util.TreeMap;
 
+import io.cronox.delta.data.cellTypes.NullCell;
 import org.springframework.stereotype.Component;
 
 import io.cronox.delta.data.cellTypes.BooleanCell;
@@ -14,12 +15,13 @@ public class CellFactory {
 	private Map<Boolean, BooleanCell> booleanMap;
 	
 	private Map<Byte, ByteCell> byteMap;
-	
-	//private Map<Number, Cell> NumberMap;
-	public CellFactory() {
+
+	private NullCell nullCell;
+
+	public CellFactory(NullCell nullCell) {
 		booleanMap = new TreeMap<Boolean, BooleanCell>();
 		byteMap = new TreeMap<Byte, ByteCell>();
-		//NumberMap = new TreeMap<Number, Cell> ();
+		this.nullCell = nullCell;
 	}
 
 	public BooleanCell getBooleanCell(boolean value) {
@@ -38,5 +40,9 @@ public class CellFactory {
 		cell = new ByteCell((byte)value);
 		byteMap.put(value, cell);
 		return cell;
+	}
+
+	public NullCell getNullCell(){
+		return nullCell;
 	}
 }

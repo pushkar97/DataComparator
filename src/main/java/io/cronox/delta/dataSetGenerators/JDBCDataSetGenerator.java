@@ -76,7 +76,7 @@ public class JDBCDataSetGenerator implements DataSetGenerator {
 			for (int i = 1; i <= metaData.getColumnCount(); i++) {
 				Cell temp;
 				if(dbRow.getObject(i) == null) {
-					temp = NullCell.getCell();
+					temp = cellBuilder.getNullCell();
 					row.add(temp);
 					continue;
 				}

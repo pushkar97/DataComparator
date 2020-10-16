@@ -11,7 +11,7 @@ public class Row extends ArrayList<Cell> implements Comparable<Row> {
 	@Override
 	public int compareTo(Row o) {
 		for(int i = 0; i < this.size(); i++) {
-			if(this.get(i).compareTo(o.get(i)) != 0 ) return this.get(i).compareTo(o.get(i));
+			if(this.get(i).compareTo(o.get(i)) != 0) return this.get(i).compareTo(o.get(i));
 		}
 		return 0;
 	}

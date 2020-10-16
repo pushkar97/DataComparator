@@ -31,7 +31,7 @@ public class TestCaseExecutor {
 	String path = "Results/";
 	public TestCaseExecutor(TestCase test, DataSetComparator comparer){
 		this.comparer = comparer;
-		this.factory = new CellFactory();
+		this.factory = BeanUtil.getBean(CellFactory.class);
 		this.test = test;
 		this.helper = BeanUtil.getBean(ShellHelper.class);
 	}

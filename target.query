@@ -1,0 +1,3 @@
+SELECT 
+id, name, date,`double`,`int` 
+FROM pub.test_data

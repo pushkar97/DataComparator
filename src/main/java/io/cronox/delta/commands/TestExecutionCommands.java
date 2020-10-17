@@ -23,26 +23,22 @@ import java.nio.file.Paths;
 @ShellComponent
 public class TestExecutionCommands {
 
-	@Autowired
 	ShellHelper helper;
-	
-	@Autowired
-    InputReader inputReader;
-	
-	@Autowired
+
 	Connections connections;
-	
-	@Autowired
-	ProgressObserver progressObserver;
-	
-	@Autowired
-	LoadingObserver loadingObserver;
-	
+
+	public TestExecutionCommands(ShellHelper helper,
+								 Connections connections){
+		this.helper = helper;
+		this.connections = connections;
+	}
+
 	@ShellMethod(value = "Run quick test without creating any testsuite or tests")
 	public String quickTest(@ShellOption(value = {"-sc", "--sourceConnection"}) String sc,
 							@ShellOption(value = {"-sq", "--sourceQuery"}, defaultValue="source.query") String sq,
 							@ShellOption(value = {"-tc", "--targetConnection"}) String tc,
-							@ShellOption(value = {"-tq", "--targetQuery"}, defaultValue="target.query") String tq) throws IOException {
+							@ShellOption(value = {"-tq", "--targetQuery"}, defaultValue="target.query") String tq)
+			throws IOException, InterruptedException {
 
 		var sourceFile = new File(sq);
 		var targetFile = new File(tq);
@@ -80,6 +76,6 @@ public class TestExecutionCommands {
 		DefaultComparator comp = new DefaultComparator();
 		TestCaseExecutor ex = new TestCaseExecutor(tempTest, comp);
 		String path = ex.execute();
-		return helper.getSuccessMessage("Test executed Successfully. Find results at :"+path);
+		return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
 	}
 }

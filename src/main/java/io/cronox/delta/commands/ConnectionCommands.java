@@ -123,7 +123,7 @@ public class ConnectionCommands {
 		helper.printInfo(conn.getUrl());
 	}
 	
-	@ShellMethod(value="Deletes specified connection")
+	@ShellMethod(value = "Deletes specified connection")
 	public String delete(String id){
 		if(!connections.contains(id))
 			return helper.getErrorMessage("Connection does not exist. ");

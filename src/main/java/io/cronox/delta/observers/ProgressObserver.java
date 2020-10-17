@@ -21,7 +21,18 @@ public class ProgressObserver implements PropertyChangeListener {
 		if((int)evt.getOldValue() > (int)evt.getNewValue()) {
 			progressBar.reset();
 		}
-		progressBar.display((int) evt.getNewValue()," :: Please wait, Comparison in progress...");
+		String message = "Please wait, Comparison in progress...";
+
+		if ((int)evt.getNewValue() >= 50){
+			message = "halfway done!";
+		}
+		if ((int)evt.getNewValue() >= 90){
+			message = "Almost there...";
+		}
+		if ((int)evt.getNewValue() == 100){
+			message = "Completed!";
+		}
+		progressBar.display((int) evt.getNewValue()," :: " + message);
 		
 		if((int)evt.getNewValue() >= 100) {
 			progressBar.reset();

@@ -14,7 +14,6 @@ import io.cronox.delta.data.DataSet;
 import io.cronox.delta.data.Row;
 import io.cronox.delta.data.cellTypes.DateCell;
 import io.cronox.delta.data.cellTypes.DoubleCell;
-import io.cronox.delta.data.cellTypes.NullCell;
 import io.cronox.delta.data.cellTypes.StringCell;
 import io.cronox.delta.helpers.SpreadSheet;
 
@@ -22,11 +21,11 @@ public class ExcelDataSetGenerator implements DataSetGenerator {
 
 	CellFactory builder;
 	
-	private SpreadSheet workbook;
+	private final SpreadSheet workbook;
 	
 	Timer timer;
 	
-	private PropertyChangeSupport support;
+	private final PropertyChangeSupport support;
 	
 	int rowsDone, rowsDoneOld;
 	
@@ -50,7 +49,7 @@ public class ExcelDataSetGenerator implements DataSetGenerator {
 	@Override
 	public DataSet generate(String query) {
 		DataSet data = new DataSet();
-		List<Collection<Object>> dbData = null;
+		List<Collection<Object>> dbData;
 
 		dbData = workbook.getData(query);
 		Row headers = new Row();

@@ -12,7 +12,7 @@ import io.cronox.delta.resultGenerator.DefaultComparatorResultGenerator;
 
 public class DefaultComparator implements DataSetComparator {
 
-	private PropertyChangeSupport support;
+	private final PropertyChangeSupport support;
 	
 	private DataSet set1, set2, matched;
 	

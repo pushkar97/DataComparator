@@ -20,20 +20,18 @@ public class GenericConnectionRepository<T extends DataSourceConnection> impleme
 
 	Logger logger = LoggerFactory.getLogger(GenericConnectionRepository.class);
 	
-	private Connections<T> connections = new Connections<T>();
+	private Connections<T> connections = new Connections<>();
 
-	private JAXBContext jaxbContext = null;
-	private Marshaller jaxbMarshaller = null;
-	private Unmarshaller jaxbUnmarshaller = null;
-	private File connectionXml = null;
+	private final Marshaller jaxbMarshaller;
+	private final File connectionXml;
 
 	@SuppressWarnings("unchecked")
 	public GenericConnectionRepository(File connectionXml, Class<T> type) throws JAXBException {
 
-		jaxbContext = JAXBContext.newInstance(type, connections.getClass());
+		JAXBContext jaxbContext = JAXBContext.newInstance(type, connections.getClass());
 		jaxbMarshaller = jaxbContext.createMarshaller();
 		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+		Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
 		this.connectionXml = connectionXml;
 		try {

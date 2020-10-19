@@ -105,11 +105,11 @@ public class ConnectionCommands {
 
 	@ShellMethod(value = "Lists all available connections")
 	public void list() {
-		Map<String, DataSourceConnection> conns = connections.list();
-		if(conns.size() == 0)
+		Map<String, DataSourceConnection> connections = this.connections.list();
+		if(connections.size() == 0)
 			helper.printInfo("No connections available. You can add Connections with 'add-jdbc' and 'add-excel' commands");
 		else {
-			conns.keySet().forEach(s -> helper.print(s));
+			connections.keySet().forEach(s -> helper.print(s));
 		}
 	}
 

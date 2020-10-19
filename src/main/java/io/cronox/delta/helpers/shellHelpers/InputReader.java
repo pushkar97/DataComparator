@@ -2,7 +2,6 @@ package io.cronox.delta.helpers.shellHelpers;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,8 +13,8 @@ public class InputReader {
 
 	public static final Character DEFAULT_MASK = '*';
 
-	private Character mask;
-	private LineReader lineReader;
+	private final Character mask;
+	private final LineReader lineReader;
 
 	ShellHelper shellHelper;
 
@@ -38,7 +37,7 @@ public class InputReader {
 	}
 
 	public String prompt(String prompt, String defaultValue, boolean echo) {
-		String answer = "";
+		String answer;
 		if (echo) {
 			answer = lineReader.readLine(prompt + ": ");
 		} else {
@@ -74,7 +73,7 @@ public class InputReader {
 				}
 			}
 			answer = lineReader.readLine(String.format("%s: ", promptMessage));
-		} while (!containsString(allowedAnswers, answer, ignoreCase) && "" != answer);
+		} while (!containsString(allowedAnswers, answer, ignoreCase) && !"".equals(answer));
 		if (StringUtils.isEmpty(answer) && allowedAnswers.contains("")) {
 			return defaultValue;
 		}
@@ -85,9 +84,8 @@ public class InputReader {
 		if (!ignoreCase) {
 			return l.contains(s);
 		}
-		Iterator<String> it = l.iterator();
-		while (it.hasNext()) {
-			if (it.next().equalsIgnoreCase(s))
+		for (String value : l) {
+			if (value.equalsIgnoreCase(s))
 				return true;
 		}
 		return false;

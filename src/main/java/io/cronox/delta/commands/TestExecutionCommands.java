@@ -44,7 +44,8 @@ public class TestExecutionCommands {
 	public String quickTest(@ShellOption(value = {"-sc", "--sourceConnection"}) String sc,
 							@ShellOption(value = {"-sq", "--sourceQuery"}, defaultValue="source.query") String sq,
 							@ShellOption(value = {"-tc", "--targetConnection"}) String tc,
-							@ShellOption(value = {"-tq", "--targetQuery"}, defaultValue="target.query") String tq)
+							@ShellOption(value = {"-tq", "--targetQuery"}, defaultValue="target.query") String tq,
+							@ShellOption(value = {"-l", "--limit"}, defaultValue="0") int limit)
 			throws IOException, InterruptedException {
 
 		var sourceFile = new File(sq);
@@ -81,13 +82,15 @@ public class TestExecutionCommands {
 		tempTest.setTargetQuery(tq);
 		
 		DefaultComparator comparator = new DefaultComparator();
+		if(limit != 0)
+			comparator.setLimit(limit);
 		TestCaseExecutor ex = new TestCaseExecutor(tempTest, comparator);
 		String path = ex.execute();
 		previousExecutionResult = comparator;
 		return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
 	}
 
-	@ShellMethod(value = "view data returned from query")
+	@ShellMethod(value = "peak data of previously executed test")
 	public void peak(@ShellOption(value = {"-s", "--select"}, defaultValue = "MATCHED SOURCE_MISMATCH TARGET_MISMATCH") String reportsArg,
 					 @ShellOption(value = {"-l", "--limit"}, defaultValue="5") long max,
 					 @ShellOption(value = {"-b", "--border"}, defaultValue = "oldschool") BorderStyle borderStyle) {

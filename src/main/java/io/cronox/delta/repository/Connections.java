@@ -18,11 +18,11 @@ import io.cronox.delta.exceptions.ConnectionNotFoundException;
 @Repository
 public class Connections {
 
-	private Map<String, DataSourceConnection> connections = new HashMap<>();
+	private final Map<String, DataSourceConnection> connections = new HashMap<>();
 
-	private GenericConnectionRepository<JDBCDataSourceConnection> jdbcRepository;
+	private final GenericConnectionRepository<JDBCDataSourceConnection> jdbcRepository;
 
-	private GenericConnectionRepository<ExcelDataSourceConnection> excelRepository;
+	private final GenericConnectionRepository<ExcelDataSourceConnection> excelRepository;
 
 	@Autowired
 	Connections(GenericConnectionRepository<JDBCDataSourceConnection> jdbcRepository,
@@ -90,7 +90,7 @@ public class Connections {
 			this.add(conn);
 		}
 		if (!conn.getClass().equals(connections.get(conn.getId()).getClass())) {
-
+			throw new RuntimeException("Invalid class: class cannot be updated for connection");
 		}
 		if (conn instanceof JDBCDataSourceConnection) {
 			return jdbcRepository.update((JDBCDataSourceConnection) conn);

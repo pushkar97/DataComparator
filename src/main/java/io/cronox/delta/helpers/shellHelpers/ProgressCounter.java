@@ -5,7 +5,7 @@ import org.jline.terminal.Terminal;
 public class ProgressCounter {
 	private static final String CUU = "\u001B[A";
 	
-	private Terminal terminal;
+	private final Terminal terminal;
 	private char[] spinner = {'◜','◝','◞','◟'}; //{ '|', '/', '-', '\\' };
 	
 	private boolean started = false;

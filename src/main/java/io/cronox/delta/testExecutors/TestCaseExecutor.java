@@ -20,9 +20,9 @@ import lombok.var;
 //Should be used only once per Test
 public class TestCaseExecutor {
 
-	private DataSetComparator comparer;
+	private final DataSetComparator comparator;
 	
-	private CellFactory factory;
+	private final CellFactory factory;
 	
 	TestCase test;
 	
@@ -32,8 +32,8 @@ public class TestCaseExecutor {
 	
 	ShellHelper helper;
 	String path = "Results/";
-	public TestCaseExecutor(TestCase test, DataSetComparator comparer){
-		this.comparer = comparer;
+	public TestCaseExecutor(TestCase test, DataSetComparator comparator){
+		this.comparator = comparator;
 		this.factory = BeanUtil.getBean(CellFactory.class);
 		this.test = test;
 		this.helper = BeanUtil.getBean(ShellHelper.class);
@@ -44,44 +44,44 @@ public class TestCaseExecutor {
 
 		getSourceDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
 		var source_read_start = Instant.now();
-		comparer.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
+		comparator.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
 		var source_read_timeElapsed = Duration.between(source_read_start, Instant.now());
 
 
 		getTargetDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
 		var target_read_start = Instant.now();
-		comparer.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
+		comparator.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
 		var target_read_timeElapsed = Duration.between(target_read_start, Instant.now());
 
 
-		comparer.subscribe(BeanUtil.getBean(ProgressObserver.class));
+		comparator.subscribe(BeanUtil.getBean(ProgressObserver.class));
 		helper.print("\nUnique Rows");
-		helper.printInfo("Source : "+comparer.getSet1().getDataSet().size()
-				+ "\nTarget : "+comparer.getSet2().getDataSet().size() + "\n");
+		helper.printInfo("Source : "+ comparator.getSet1().getDataSet().size()
+				+ "\nTarget : "+ comparator.getSet2().getDataSet().size() + "\n");
 
 		var comparison_start = Instant.now();
 		try {
-			comparer.compare();
+			comparator.compare();
 		}catch(ComparisonLimitExceededException e) {
 			helper.printError(e.getMessage());
 		}
 		var comparison_timeElapsed = Duration.between(comparison_start, Instant.now());
 
-		helper.printSuccess("\nMatched : "+comparer.getMatched().size());
+		helper.printSuccess("\nMatched : "+ comparator.getMatched().size());
 
 		helper.print("\nMismatched");
-		helper.printError("Source : "+comparer.getSet1().getDataSet().size()
-				+ "\nTarget : "+comparer.getSet2().getDataSet().size());
+		helper.printError("Source : "+ comparator.getSet1().getDataSet().size()
+				+ "\nTarget : "+ comparator.getSet2().getDataSet().size());
 
 		helper.print("\nDuplicates");
-		helper.printWarning("Source : "+comparer.getSet1().getDuplicates().size()
-				+ "\nTarget : "+comparer.getSet2().getDuplicates().size());
+		helper.printWarning("Source : "+ comparator.getSet1().getDuplicates().size()
+				+ "\nTarget : "+ comparator.getSet2().getDuplicates().size());
 
 		
-		ResultGenerator generator = BeanUtil.getBean(comparer.getResultGenerator());
+		ResultGenerator generator = BeanUtil.getBean(comparator.getResultGenerator());
 		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		var eot_gen_start = Instant.now();
-		String eot = generator.generate(comparer, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
+		String eot = generator.generate(comparator, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
 		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
 
 		helper.printInfo("\nExecution info");

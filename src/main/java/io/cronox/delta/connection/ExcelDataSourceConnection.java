@@ -48,9 +48,7 @@ public class ExcelDataSourceConnection implements DataSourceConnection {
 	
 	@Override
 	public boolean testConnection() {
-		if(!new File(url).exists())
-			return false;
-		return true;
+		return new File(url).exists();
 	}
 
 	@Override

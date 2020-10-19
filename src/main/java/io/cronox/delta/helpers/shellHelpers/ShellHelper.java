@@ -19,7 +19,7 @@ public class ShellHelper {
 	@Value("${shell.out.error}")
 	public String errorColor;
 
-	private Terminal terminal;
+	private final Terminal terminal;
 
 	public ShellHelper(Terminal terminal) {
 		this.terminal = terminal;

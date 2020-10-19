@@ -24,7 +24,7 @@ public class RepositoryConfig {
 	@Bean
 	GenericConnectionRepository<JDBCDataSourceConnection> jdbcRepository() {
 		try {
-			return new GenericConnectionRepository<JDBCDataSourceConnection>
+			return new GenericConnectionRepository<>
 				(new File(jdbcConnectionXmlPath), JDBCDataSourceConnection.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -35,7 +35,7 @@ public class RepositoryConfig {
 	@Bean
 	GenericConnectionRepository<ExcelDataSourceConnection> excelRepository() {
 		try {
-			return new GenericConnectionRepository<ExcelDataSourceConnection>
+			return new GenericConnectionRepository<>
 				(new File(excelConnectionXmlPath), ExcelDataSourceConnection.class);
 		} catch (JAXBException e) {
 			e.printStackTrace();

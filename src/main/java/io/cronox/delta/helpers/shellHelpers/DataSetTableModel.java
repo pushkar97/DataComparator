@@ -13,12 +13,17 @@ import java.util.stream.Collectors;
 
 public class DataSetTableModel extends TableModel {
 
+    long actualSize;
     List<Row> data;
 
-    private DataSetTableModel(List<Row> data) {this.data = data;}
+    private DataSetTableModel(List<Row> data, long actualSize) {this.data = data; this.actualSize = actualSize;}
 
     public static DataSetTableModelBuilder builder(DataSet dataSet){
         return new DataSetTableModelBuilder(dataSet);
+    }
+
+    public long getActualSize(){
+        return actualSize;
     }
 
     @Override
@@ -41,6 +46,7 @@ public class DataSetTableModel extends TableModel {
         List<Row> data;
         DataSet dataSet;
         long limit = 0;
+
         DatasetExtract extract = DatasetExtract.DATA;
 
         public DataSetTableModelBuilder(@NotNull DataSet dataSet){
@@ -58,7 +64,7 @@ public class DataSetTableModel extends TableModel {
         }
 
         public DataSetTableModel build(){
-
+            long actualSize = dataSet.getData(this.extract).size();
             if(limit != 0)
                 data = dataSet.getData(this.extract).stream().limit(this.limit).collect(Collectors.toCollection(LinkedList::new));
             else
@@ -66,7 +72,7 @@ public class DataSetTableModel extends TableModel {
 
             data.add(0,dataSet.getHeader());
 
-            return new DataSetTableModel(data);
+            return new DataSetTableModel(data, actualSize);
         }
     }
 }

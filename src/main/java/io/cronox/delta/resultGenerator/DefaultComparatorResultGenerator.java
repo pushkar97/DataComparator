@@ -1,15 +1,14 @@
 package io.cronox.delta.resultGenerator;
 
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.function.Function;
-
+import io.cronox.delta.comparators.DataSetComparator;
+import io.cronox.delta.helpers.CsvHelpers;
 import io.cronox.delta.models.DatasetExtract;
+import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.cronox.delta.comparators.DataSetComparator;
-import io.cronox.delta.helpers.CsvHelpers;
+import java.io.File;
+import java.nio.file.Paths;
 
 @Component
 public class DefaultComparatorResultGenerator implements ResultGenerator {
@@ -21,44 +20,56 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
     public String generate(DataSetComparator comp, String path) throws InterruptedException {
         File f = Paths.get(path).toAbsolutePath().toFile();
         if (!f.exists()) {
-            f.mkdirs();
+            var mkd = f.mkdirs();
+            if(!mkd)
+                return "failed to create directory to store results";
         }
 
-        Runnable matched_runnable = () -> {
-            csvHelpers.datasetToCsv(comp.getMatched(), new File(f, "matched.csv"), DatasetExtract.DATA);
-        };
-        Thread matched_thread = new Thread(matched_runnable);
-        matched_thread.start();
+        Thread matched_thread = null;
+        Thread source_mismatch_thread = null;
+        Thread target_mismatch_thread = null;
+        Thread source_duplicates_thread = null;
+        Thread target_duplicates_thread = null;
 
-        Runnable source_mismatch_runnable = () -> {
-            csvHelpers.datasetToCsv(comp.getSet1(), new File(f, "Source_mismatch.csv"), DatasetExtract.DATA);
-        };
-        Thread source_mismatch_thread = new Thread(source_mismatch_runnable);
-        source_mismatch_thread.start();
+        if(comp.getMatched().size() != 0) {
+            Runnable matched_runnable = () -> csvHelpers.datasetToCsv(comp.getMatched(), new File(f, "matched.csv"), DatasetExtract.DATA);
+            matched_thread = new Thread(matched_runnable);
+            matched_thread.start();
+        }
 
-        Runnable target_mismatch_runnable = () -> {
-            csvHelpers.datasetToCsv(comp.getSet2(), new File(f, "Target_mismatch.csv"), DatasetExtract.DATA);
-        };
-        Thread target_mismatch_thread = new Thread(target_mismatch_runnable);
-        target_mismatch_thread.start();
+        if(comp.getSet1().size() != 0){
+            Runnable source_mismatch_runnable = () -> csvHelpers.datasetToCsv(comp.getSet1(), new File(f, "Source_mismatch.csv"), DatasetExtract.DATA);
+            source_mismatch_thread = new Thread(source_mismatch_runnable);
+            source_mismatch_thread.start();
+        }
 
-        Runnable source_duplicates_runnable = () -> {
-            csvHelpers.datasetToCsv(comp.getSet1(), new File(f, "Source_duplicates.csv"), DatasetExtract.DUPLICATES);
-        };
-        Thread source_duplicates_thread = new Thread(source_duplicates_runnable);
-        source_duplicates_thread.start();
+        if(comp.getSet2().size() != 0) {
+            Runnable target_mismatch_runnable = () -> csvHelpers.datasetToCsv(comp.getSet2(), new File(f, "Target_mismatch.csv"), DatasetExtract.DATA);
+            target_mismatch_thread = new Thread(target_mismatch_runnable);
+            target_mismatch_thread.start();
+        }
 
-        Runnable target_duplicates_runnable = () -> {
-            csvHelpers.datasetToCsv(comp.getSet2(), new File(f, "Target_duplicates.csv"), DatasetExtract.DUPLICATES);
-        };
-        Thread target_duplicates_thread = new Thread(target_duplicates_runnable);
-        target_duplicates_thread.start();
+        if(comp.getSet1().getDuplicates().size() != 0) {
+            Runnable source_duplicates_runnable = () -> csvHelpers.datasetToCsv(comp.getSet1(), new File(f, "Source_duplicates.csv"), DatasetExtract.DUPLICATES);
+            source_duplicates_thread = new Thread(source_duplicates_runnable);
+            source_duplicates_thread.start();
+        }
 
-        matched_thread.join();
-        source_mismatch_thread.join();
-        target_mismatch_thread.join();
-        source_duplicates_thread.join();
-        target_duplicates_thread.join();
+        if(comp.getSet2().getDuplicates().size() != 0) {
+            Runnable target_duplicates_runnable = () -> csvHelpers.datasetToCsv(comp.getSet2(), new File(f, "Target_duplicates.csv"), DatasetExtract.DUPLICATES);
+            target_duplicates_thread = new Thread(target_duplicates_runnable);
+            target_duplicates_thread.start();
+        }
+        if(matched_thread != null)
+            matched_thread.join();
+        if(source_mismatch_thread != null)
+            source_mismatch_thread.join();
+        if(target_mismatch_thread != null)
+            target_mismatch_thread.join();
+        if(source_duplicates_thread != null)
+            source_duplicates_thread.join();
+        if(target_duplicates_thread != null)
+            target_duplicates_thread.join();
 
         return f.getAbsolutePath();
     }

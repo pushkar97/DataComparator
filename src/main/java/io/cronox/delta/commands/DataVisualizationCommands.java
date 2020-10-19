@@ -47,6 +47,6 @@ public class DataVisualizationCommands {
         var tableBuilder = new TableBuilder(model);
         tableBuilder.addHeaderAndVerticalsBorders(borderStyle);
         shellHelper.print(tableBuilder.build().render(140));
-        return shellHelper.getInfoMessage("Total rows : " + (model.getRowCount() - 1));
+        return shellHelper.getInfoMessage("Total rows: " + model.getActualSize() +", Currently displayed: " + (model.getRowCount() - 1));
     }
 }

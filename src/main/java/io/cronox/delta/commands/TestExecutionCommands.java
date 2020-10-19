@@ -122,9 +122,9 @@ public class TestExecutionCommands {
 			var tableBuilder = new TableBuilder(model);
 			tableBuilder.addHeaderAndVerticalsBorders(borderStyle);
 			helper.print(tableBuilder.build().render(140));
-			helper.printInfo("Total rows : " + (model.getRowCount() - 1));
+			helper.printInfo("Total rows: " + model.getActualSize() +", Currently displayed: " + (model.getRowCount() - 1));
 		}else {
-			helper.printInfo("No data to display : 0 rows found");
+			helper.printWarning("No data to display : 0 rows found");
 		}
 	}
 }

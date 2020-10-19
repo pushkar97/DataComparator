@@ -81,29 +81,34 @@ public class DefaultComparator implements DataSetComparator {
 			}
 
 			if (result < 0) {
+				set1MismatchCount++;
 				rowsComplete++;
 				if (!set1I.hasNext())
 					break;
 				set1R = set1I.next();
-				
-				if(limit > 0 && ++set1MismatchCount >= limit)
+				if(limit > 0 && set1MismatchCount >= limit)
 					throw new ComparisonLimitExceededException(
 							"Too Many mismatches in source : "+ set1MismatchCount);
 			}
 
 			if (result > 0) {
+				set2MismatchCount++;
 				rowsComplete++;
 				if (!set2I.hasNext())
 					break;
 				set2R = set2I.next();
-				if(limit > 0 && ++set2MismatchCount >= limit)
+				if(limit > 0 && set2MismatchCount >= limit)
 					throw new ComparisonLimitExceededException(
 							"Too Many mismatches in target : "+ set2MismatchCount);
 			}
 			updateProgress();
 		}
-		rowsComplete+=set1.size();
-		rowsComplete+=set2.size();
+
+		if(set2.size() == set2MismatchCount)
+			rowsComplete += (set1.size() - set1MismatchCount);
+		if(set1.size() == set1MismatchCount)
+			rowsComplete += (set2.size() - set2MismatchCount);
+
 		updateProgress();
 	}
 

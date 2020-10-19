@@ -4,9 +4,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Iterator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import io.cronox.delta.data.DataSet;
 import io.cronox.delta.data.Row;
 import io.cronox.delta.exceptions.ComparisonException;
@@ -14,8 +11,6 @@ import io.cronox.delta.exceptions.ComparisonLimitExceededException;
 import io.cronox.delta.resultGenerator.DefaultComparatorResultGenerator;
 
 public class DefaultComparator implements DataSetComparator {
-
-	Logger logger = LoggerFactory.getLogger(DefaultComparator.class);
 
 	private PropertyChangeSupport support;
 	

@@ -56,6 +56,4 @@ public class ProgressBar {
 		this.rightDelimiter = rightDelimiter;
 	}
 
-    
-    
 }

@@ -11,21 +11,21 @@ public interface DataSetComparator {
 	
 	void compare() throws ComparisonLimitExceededException;
 	
-	public void setSet1(DataSet set1);
+	void setSet1(DataSet set1);
 
-	public void setSet2(DataSet set2);
+	void setSet2(DataSet set2);
 	
-	public DataSet getMatched();
+	DataSet getMatched();
 
-	public DataSet getSet1();
+	DataSet getSet1();
 
-	public DataSet getSet2();
+	DataSet getSet2();
 	
-	public int getLimit();
+	int getLimit();
 	
-	public void setLimit(int limit);
+	void setLimit(int limit);
 	
-	public void subscribe(PropertyChangeListener observer);
+	void subscribe(PropertyChangeListener observer);
 	
-	public <T extends ResultGenerator>Class<DefaultComparatorResultGenerator>  getResultGenerator();
+	<T extends ResultGenerator> Class<DefaultComparatorResultGenerator>  getResultGenerator();
 }

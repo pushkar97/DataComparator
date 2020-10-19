@@ -109,9 +109,7 @@ public class ConnectionCommands {
 		if(conns.size() == 0)
 			helper.printInfo("No connections available. You can add Connections with 'add-jdbc' and 'add-excel' commands");
 		else {
-			conns.keySet().forEach(s ->{
-				helper.print(s);
-			});
+			conns.keySet().forEach(s -> helper.print(s));
 		}
 	}
 

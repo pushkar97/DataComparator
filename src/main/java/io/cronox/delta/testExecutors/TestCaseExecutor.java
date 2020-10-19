@@ -55,11 +55,10 @@ public class TestCaseExecutor {
 
 
 		comparer.subscribe(BeanUtil.getBean(ProgressObserver.class));
-		helper.print("");
-		helper.print("Unique Rows");
-		helper.printInfo("Source : "+comparer.getSet1().getDataSet().size());
-		helper.printInfo("Target : "+comparer.getSet2().getDataSet().size());
-		helper.print("");
+		helper.print("\nUnique Rows");
+		helper.printInfo("Source : "+comparer.getSet1().getDataSet().size()
+				+ "\nTarget : "+comparer.getSet2().getDataSet().size() + "\n");
+
 		var comparison_start = Instant.now();
 		try {
 			comparer.compare();
@@ -68,17 +67,16 @@ public class TestCaseExecutor {
 		}
 		var comparison_timeElapsed = Duration.between(comparison_start, Instant.now());
 
+		helper.printSuccess("\nMatched : "+comparer.getMatched().size());
 
-		helper.print("");
-		helper.printSuccess("Matched : "+comparer.getMatched().size());
-		helper.print("");
-		helper.print("Mismatched");
-		helper.printError("Source : "+comparer.getSet1().getDataSet().size());
-		helper.printError("Target : "+comparer.getSet2().getDataSet().size());
-		helper.print("");
-		helper.print("Duplicates");
-		helper.printWarning("Source : "+comparer.getSet1().getDuplicates().size());
-		helper.printWarning("Target : "+comparer.getSet2().getDuplicates().size());
+		helper.print("\nMismatched");
+		helper.printError("Source : "+comparer.getSet1().getDataSet().size()
+				+ "\nTarget : "+comparer.getSet2().getDataSet().size());
+
+		helper.print("\nDuplicates");
+		helper.printWarning("Source : "+comparer.getSet1().getDuplicates().size()
+				+ "\nTarget : "+comparer.getSet2().getDuplicates().size());
+
 		
 		ResultGenerator generator = BeanUtil.getBean(comparer.getResultGenerator());
 		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -100,7 +98,7 @@ public class TestCaseExecutor {
 		return factory;
 	}
 	
-	public DataSetGenerator  getSourceDataSetGenerator() {
+	public DataSetGenerator getSourceDataSetGenerator() {
 		if(this.sourceDataSetGenerator == null) {
 			this.sourceDataSetGenerator = test.getSourceConnection().getDataSetGenerator(factory);
 		}

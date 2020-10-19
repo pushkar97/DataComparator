@@ -1,9 +1,13 @@
 package io.cronox.delta.data;
 
+import io.cronox.delta.models.DatasetExtract;
+
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class DataSet {
+
 	private Set<Row> dataSet = new TreeSet<Row>();
 	
 	private Set<Row> duplicates = new TreeSet<Row>();
@@ -32,5 +36,16 @@ public class DataSet {
 	
 	public int size() {
 		return dataSet.size();
+	}
+
+	public Set<Row> getData(DatasetExtract extract){
+		switch (extract){
+			case DATA:
+				return getDataSet();
+			case DUPLICATES:
+				return getDuplicates();
+			default:
+				throw new RuntimeException("Invalid value for Extract");
+		}
 	}
 }

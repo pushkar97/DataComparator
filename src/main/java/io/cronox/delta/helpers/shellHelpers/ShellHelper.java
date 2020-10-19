@@ -75,6 +75,7 @@ public class ShellHelper {
 		terminal.flush();
 	}
 
+
 	
 	public Terminal getTerminal() {
 		return terminal;

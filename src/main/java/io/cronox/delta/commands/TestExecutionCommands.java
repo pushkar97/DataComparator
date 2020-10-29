@@ -90,8 +90,8 @@ public class TestExecutionCommands {
 		return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
 	}
 
-	@ShellMethod(value = "peak data of previously executed test")
-	public void peak(@ShellOption(value = {"-s", "--select"}, defaultValue = "MATCHED SOURCE_MISMATCH TARGET_MISMATCH") String reportsArg,
+	@ShellMethod(value = "peek data of previously executed test")
+	public void peek(@ShellOption(value = {"-s", "--select"}, defaultValue = "MATCHED SOURCE_MISMATCH TARGET_MISMATCH") String reportsArg,
 					 @ShellOption(value = {"-l", "--limit"}, defaultValue="5") long max,
 					 @ShellOption(value = {"-b", "--border"}, defaultValue = "oldschool") BorderStyle borderStyle) {
 
@@ -120,7 +120,9 @@ public class TestExecutionCommands {
 
 	private void printDataTable(DataSet data, String title, long max, DatasetExtract extract, BorderStyle borderStyle) {
 		helper.printInfo("\n\n" + title);
-		if (data.size() != 0) {
+		if ((extract.equals(DatasetExtract.DATA) && data.size() != 0) ||
+				(extract.equals(DatasetExtract.DUPLICATES) && data.getDuplicates().size() != 0)) {
+
 			DataSetTableModel model = DataSetTableModel.builder(data).limit(max).extract(extract).build();
 			var tableBuilder = new TableBuilder(model);
 			tableBuilder.addHeaderAndVerticalsBorders(borderStyle);

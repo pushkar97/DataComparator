@@ -58,7 +58,17 @@ public class JDBCDataSourceConnection implements DataSourceConnection {
 	public void subscribe(PropertyChangeListener pcl) {
 		support.addPropertyChangeListener(pcl);
 	}
-	
+
+	@Override
+	public void setMaxRows(int maxRows) {
+		this.getJdbcTemplate().setMaxRows(maxRows);
+	}
+
+	@Override
+	public void setFetchSize(int fetchSize) {
+		this.getJdbcTemplate().setFetchSize(fetchSize);
+	}
+
 	@Override
 	public DataSetGenerator getDataSetGenerator(CellFactory factory) {
 		if(!this.testConnection()) {

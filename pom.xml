@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>io.cronox</groupId>
 	<artifactId>delta</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>delta</name>
 	<description>data change capture</description>
 	<packaging>jar</packaging>
@@ -53,7 +53,13 @@
 			<artifactId>opencsv</artifactId>
 			<version>4.1</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<resources>

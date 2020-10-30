@@ -1,5 +1,7 @@
 package io.cronox.delta.data.cellTypes;
 
+import java.math.BigDecimal;
+
 public class IntegerCell implements Cell {
 
 	private int value;
@@ -10,7 +12,10 @@ public class IntegerCell implements Cell {
 
 	public int compareTo(Cell o) {
 		if(o instanceof IntegerCell) return this.compareTo((IntegerCell)o);
-		
+
+		if (o instanceof BigDecimalCell)
+			return BigDecimal.valueOf(((IntegerCell) this).value).compareTo(((BigDecimalCell) o).getValue());
+
 		if (o.getValue() instanceof Number)
 			return Double.compare(((Number)this.value).doubleValue(),((Number) o.getValue()).doubleValue());
 		

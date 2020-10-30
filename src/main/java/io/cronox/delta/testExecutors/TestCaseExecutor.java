@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.cronox.delta.comparators.DataSetComparator;
 import io.cronox.delta.data.CellFactory;
@@ -40,20 +41,26 @@ public class TestCaseExecutor {
 	}
 	
 	public String execute() throws InterruptedException {
+
+		AtomicReference<Duration> source_read_timeElapsed = new AtomicReference<>();
+		AtomicReference<Duration> target_read_timeElapsed = new AtomicReference<>();
+		Thread fetchSourceThread = new Thread(() -> {
+			getSourceDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
+			var source_read_start = Instant.now();
+			comparator.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
+			source_read_timeElapsed.set(Duration.between(source_read_start, Instant.now()));
+		});
+		Thread fetchTargetThread = new Thread(() -> {
+			getTargetDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
+			var target_read_start = Instant.now();
+			comparator.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
+			target_read_timeElapsed.set(Duration.between(target_read_start, Instant.now()));
+		});
 		var execution_start = Instant.now();
-
-		getSourceDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
-		var source_read_start = Instant.now();
-		comparator.setSet1(getSourceDataSetGenerator().generate(test.getSourceQuery()));
-		var source_read_timeElapsed = Duration.between(source_read_start, Instant.now());
-
-
-		getTargetDataSetGenerator().subscribe(BeanUtil.getBean(LoadingObserver.class));
-		var target_read_start = Instant.now();
-		comparator.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
-		var target_read_timeElapsed = Duration.between(target_read_start, Instant.now());
-
-
+		fetchSourceThread.start();
+		fetchTargetThread.start();
+		fetchSourceThread.join();
+		fetchTargetThread.join();
 		comparator.subscribe(BeanUtil.getBean(ProgressObserver.class));
 		helper.print("\nUnique Rows");
 		helper.printInfo("Source : "+ comparator.getSet1().getDataSet().size()
@@ -85,8 +92,8 @@ public class TestCaseExecutor {
 		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
 
 		helper.printInfo("\nExecution info");
-		helper.print("Reading source data took " + helper.getInfoMessage(Long.toString(source_read_timeElapsed.toMillis())) + " milliseconds");
-		helper.print("Reading target data took " + helper.getInfoMessage(Long.toString(target_read_timeElapsed.toMillis())) + " milliseconds");
+		helper.print("Reading source data took " + helper.getInfoMessage(Long.toString(source_read_timeElapsed.get().toMillis())) + " milliseconds");
+		helper.print("Reading target data took " + helper.getInfoMessage(Long.toString(target_read_timeElapsed.get().toMillis())) + " milliseconds");
 		helper.print("Comparison took " + helper.getInfoMessage(Long.toString(comparison_timeElapsed.toMillis())) + " milliseconds");
 		helper.print("Evidence of test generation took " + helper.getInfoMessage(Long.toString(eot_gen_timeElapsed.toMillis())) + " milliseconds");
 		helper.print("Total execution took " + helper.getInfoMessage(Long.toString(Duration.between(execution_start, Instant.now()).toMillis())) + " milliseconds");

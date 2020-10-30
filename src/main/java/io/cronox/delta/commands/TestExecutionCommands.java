@@ -1,6 +1,7 @@
 package io.cronox.delta.commands;
 
 import io.cronox.delta.data.DataSet;
+import io.cronox.delta.helpers.CliTableHelper;
 import io.cronox.delta.helpers.shellHelpers.DataSetTableModel;
 import io.cronox.delta.models.DatasetExtract;
 import io.cronox.delta.models.ReportType;
@@ -30,14 +31,18 @@ public class TestExecutionCommands {
 
 	ShellHelper helper;
 
+	CliTableHelper cliTableHelper;
+
 	Connections connections;
 
 	public DefaultComparator previousExecutionResult;
 
 	public TestExecutionCommands(ShellHelper helper,
-								 Connections connections){
+								 Connections connections,
+								 CliTableHelper cliTableHelper){
 		this.helper = helper;
 		this.connections = connections;
+		this.cliTableHelper = cliTableHelper;
 	}
 
 	@ShellMethod(value = "Run quick test without creating any testsuite or tests", key = {"qt", "quickTest"})
@@ -98,38 +103,24 @@ public class TestExecutionCommands {
 		var reports = Arrays.stream(reportsArg.split(" ")).map(ReportType::valueOf).collect(Collectors.toCollection(HashSet::new));
 		if(reports.contains(ReportType.MATCHED)) {
 			var data = previousExecutionResult.getMatched();
-			printDataTable(data, ReportType.MATCHED.toString(), max, DatasetExtract.DATA, borderStyle);
+			cliTableHelper.printDataTable(data, ReportType.MATCHED.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.SOURCE_MISMATCH)) {
 			var data = previousExecutionResult.getSet1();
-			printDataTable(data, ReportType.SOURCE_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
+			cliTableHelper.printDataTable(data, ReportType.SOURCE_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.TARGET_MISMATCH)) {
 			var data = previousExecutionResult.getSet2();
-			printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
+			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.SOURCE_DUPLICATE)) {
 			var data = previousExecutionResult.getSet1();
-			printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES, borderStyle);
+			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES, borderStyle);
 		}
 		if(reports.contains(ReportType.TARGET_DUPLICATE)) {
 			var data = previousExecutionResult.getSet2();
-			printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES,borderStyle);
+			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES,borderStyle);
 		}
 	}
 
-	private void printDataTable(DataSet data, String title, long max, DatasetExtract extract, BorderStyle borderStyle) {
-		helper.printInfo("\n\n" + title);
-		if ((extract.equals(DatasetExtract.DATA) && data.size() != 0) ||
-				(extract.equals(DatasetExtract.DUPLICATES) && data.getDuplicates().size() != 0)) {
-
-			DataSetTableModel model = DataSetTableModel.builder(data).limit(max).extract(extract).build();
-			var tableBuilder = new TableBuilder(model);
-			tableBuilder.addHeaderAndVerticalsBorders(borderStyle);
-			helper.print(tableBuilder.build().render(140));
-			helper.printInfo("Total rows: " + model.getActualSize() +", Currently displayed: " + (model.getRowCount() - 1));
-		}else {
-			helper.printWarning("No data to display : 0 rows found");
-		}
-	}
 }

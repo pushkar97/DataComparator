@@ -45,7 +45,17 @@ public class ExcelDataSourceConnection implements DataSourceConnection {
 	public void subscribe(PropertyChangeListener pcl) {
 		support.addPropertyChangeListener(pcl);
 	}
-	
+
+	@Override
+	public void setMaxRows(int maxRows) {
+
+	}
+
+	@Override
+	public void setFetchSize(int fetchSize) {
+
+	}
+
 	@Override
 	public boolean testConnection() {
 		return new File(url).exists();

@@ -16,4 +16,8 @@ public interface DataSourceConnection {
 	DataSetGenerator getDataSetGenerator(CellFactory factory);
 	
 	void subscribe(PropertyChangeListener pcl);
+
+	void setMaxRows(int maxRows);
+
+	void setFetchSize(int fetchSize);
 }

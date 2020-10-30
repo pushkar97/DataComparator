@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NullCell implements Cell {
 
-	@Value("${data.null.string:abc}")
+	@Value("${data.null.string}")
 	private String nullString;
 
 	public NullCell() { }

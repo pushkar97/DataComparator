@@ -45,7 +45,7 @@ public class DataSetTableModel extends TableModel {
 
         List<Row> data;
         DataSet dataSet;
-        long limit = 0;
+        long limit = -1;
 
         DatasetExtract extract = DatasetExtract.DATA;
 
@@ -65,7 +65,7 @@ public class DataSetTableModel extends TableModel {
 
         public DataSetTableModel build(){
             long actualSize = dataSet.getData(this.extract).size();
-            if(limit != 0)
+            if(limit != -1)
                 data = dataSet.getData(this.extract).stream().limit(this.limit).collect(Collectors.toCollection(LinkedList::new));
             else
                 data = new LinkedList<>(dataSet.getData(this.extract));

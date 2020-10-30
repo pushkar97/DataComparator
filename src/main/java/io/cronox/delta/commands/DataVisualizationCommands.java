@@ -2,14 +2,14 @@ package io.cronox.delta.commands;
 
 import io.cronox.delta.connection.DataSourceConnection;
 import io.cronox.delta.data.CellFactory;
-import io.cronox.delta.helpers.shellHelpers.DataSetTableModel;
+import io.cronox.delta.helpers.CliTableHelper;
 import io.cronox.delta.helpers.shellHelpers.ShellHelper;
+import io.cronox.delta.models.DatasetExtract;
 import lombok.var;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.BorderStyle;
-import org.springframework.shell.table.TableBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,17 +21,22 @@ public class DataVisualizationCommands {
 
     ShellHelper shellHelper;
 
+    CliTableHelper cliTableHelper;
+
     CellFactory cellFactory;
 
-    public DataVisualizationCommands(ShellHelper shellHelper, CellFactory cellFactory){
+    public DataVisualizationCommands(ShellHelper shellHelper,
+                                     CellFactory cellFactory,
+                                     CliTableHelper cliTableHelper){
         this.shellHelper = shellHelper;
         this.cellFactory = cellFactory;
+        this.cliTableHelper = cliTableHelper;
     }
 
     @ShellMethod(value = "view data returned from query")
-    public String view(@ShellOption(value = {"-c", "--conn"}) DataSourceConnection connection,
+    public void view(@ShellOption(value = {"-c", "--conn"}) DataSourceConnection connection,
                        @ShellOption(value = {"-q", "--query"}) String query,
-                       @ShellOption(value = {"-l", "--limit"}, defaultValue="0") long max,
+                       @ShellOption(value = {"-l", "--limit"}, defaultValue="-1") int max,
                        @ShellOption(value = {"-b", "--border"}, defaultValue = "oldschool") BorderStyle borderStyle) throws IOException {
 
         var sourceFile = new File(query);
@@ -42,11 +47,9 @@ public class DataVisualizationCommands {
             query = new String(Files.readAllBytes(Paths.get(sourceFile.getAbsolutePath())));
         }
 
+        connection.setMaxRows(max);
         var data = connection.getDataSetGenerator(cellFactory).generate(query);
-        DataSetTableModel model = DataSetTableModel.builder(data).limit(max).build();
-        var tableBuilder = new TableBuilder(model);
-        tableBuilder.addHeaderAndVerticalsBorders(borderStyle);
-        shellHelper.print(tableBuilder.build().render(140));
-        return shellHelper.getInfoMessage("Total rows: " + model.getActualSize() +", Currently displayed: " + (model.getRowCount() - 1));
+
+        cliTableHelper.printDataTable(data, "Result", max, DatasetExtract.DATA, borderStyle);
     }
 }

@@ -1,5 +1,6 @@
 package io.cronox.delta.testExecutors;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -56,6 +57,7 @@ public class TestCaseExecutor {
 			comparator.setSet2(getTargetDataSetGenerator().generate(test.getTargetQuery()));
 			target_read_timeElapsed.set(Duration.between(target_read_start, Instant.now()));
 		});
+
 		var execution_start = Instant.now();
 		fetchSourceThread.start();
 		fetchTargetThread.start();
@@ -84,23 +86,25 @@ public class TestCaseExecutor {
 		helper.printWarning("Source : "+ comparator.getSet1().getDuplicates().size()
 				+ "\nTarget : "+ comparator.getSet2().getDuplicates().size());
 
-		
-		ResultGenerator generator = BeanUtil.getBean(comparator.getResultGenerator());
-		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-		var eot_gen_start = Instant.now();
-		String eot = generator.generate(comparator, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
-		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
-
 		helper.printInfo("\nExecution info");
 		helper.print("Reading source data took " + helper.getInfoMessage(Long.toString(source_read_timeElapsed.get().toMillis())) + " milliseconds");
 		helper.print("Reading target data took " + helper.getInfoMessage(Long.toString(target_read_timeElapsed.get().toMillis())) + " milliseconds");
 		helper.print("Comparison took " + helper.getInfoMessage(Long.toString(comparison_timeElapsed.toMillis())) + " milliseconds");
-		helper.print("Evidence of test generation took " + helper.getInfoMessage(Long.toString(eot_gen_timeElapsed.toMillis())) + " milliseconds");
 		helper.print("Total execution took " + helper.getInfoMessage(Long.toString(Duration.between(execution_start, Instant.now()).toMillis())) + " milliseconds");
+		return null;
+	}
 
+	public String generateEoT() throws IOException, InterruptedException {
+		helper.print("\nGenerating Evidence");
+		ResultGenerator generator = BeanUtil.getBean(comparator.getResultGenerator());
+		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+		var eot_gen_start = Instant.now();
+		String eot = generator.generate(comparator, test, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
+		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
+		helper.print("Evidence generation took " + helper.getInfoMessage(Long.toString(eot_gen_timeElapsed.toMillis())) + " milliseconds");
 		return eot;
 	}
-	
+
 	public CellFactory getFactory() {
 		return factory;
 	}

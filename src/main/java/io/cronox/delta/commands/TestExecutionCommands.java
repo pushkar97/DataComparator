@@ -1,8 +1,7 @@
 package io.cronox.delta.commands;
 
-import io.cronox.delta.data.DataSet;
+import io.cronox.delta.connection.DataSourceConnection;
 import io.cronox.delta.helpers.CliTableHelper;
-import io.cronox.delta.helpers.shellHelpers.DataSetTableModel;
 import io.cronox.delta.models.DatasetExtract;
 import io.cronox.delta.models.ReportType;
 import lombok.var;
@@ -16,7 +15,6 @@ import io.cronox.delta.repository.Connections;
 import io.cronox.delta.testExecutors.TestCaseExecutor;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.BorderStyle;
-import org.springframework.shell.table.TableBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +48,10 @@ public class TestExecutionCommands {
 							@ShellOption(value = {"-sq", "--sourceQuery"}, defaultValue="source.query") String sq,
 							@ShellOption(value = {"-tc", "--targetConnection"}) String tc,
 							@ShellOption(value = {"-tq", "--targetQuery"}, defaultValue="target.query") String tq,
-							@ShellOption(value = {"-l", "--limit"}, defaultValue="0") int limit)
+							@ShellOption(value = {"-ml", "--mismatchLimit"}, defaultValue="0") int limit,
+							@ShellOption(value = {"-mr", "--maxRows"}, defaultValue="-1") int maxRows,
+							@ShellOption(value = {"-f", "--fetch"}, defaultValue="-1") int fetchSize,
+							@ShellOption(value = {"-ne", "--noEvidence"}) boolean noEvidence)
 			throws IOException, InterruptedException {
 
 		var sourceFile = new File(sq);
@@ -73,13 +74,21 @@ public class TestExecutionCommands {
 		}
 
 		TestCase tempTest = new TestCase("QuickTest");
-		if(connections.contains(sc))
-			tempTest.setSourceConnection(connections.get(sc));
+		if(connections.contains(sc)) {
+			DataSourceConnection source_connection = connections.get(sc);
+			source_connection.setMaxRows(maxRows);
+			source_connection.setFetchSize(fetchSize);
+			tempTest.setSourceConnection(source_connection);
+		}
 		else
 			return helper.getErrorMessage("Source connection could not be found.");
 		
-		if(connections.contains(tc))
-			tempTest.setTargetConnection(connections.get(tc));
+		if(connections.contains(tc)) {
+			DataSourceConnection target_connection = connections.get(tc);
+			target_connection.setMaxRows(maxRows);
+			target_connection.setFetchSize(fetchSize);
+			tempTest.setTargetConnection(target_connection);
+		}
 		else 
 			return helper.getErrorMessage("Target connection could not be found.");
 
@@ -90,9 +99,15 @@ public class TestExecutionCommands {
 		if(limit != 0)
 			comparator.setLimit(limit);
 		TestCaseExecutor ex = new TestCaseExecutor(tempTest, comparator);
-		String path = ex.execute();
+
+		ex.execute();
 		previousExecutionResult = comparator;
-		return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
+
+		if(!noEvidence) {
+			String path = ex.generateEoT();
+			return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
+		}
+		return helper.getSuccessMessage("Test executed Successfully.");
 	}
 
 	@ShellMethod(value = "peek data of previously executed test")

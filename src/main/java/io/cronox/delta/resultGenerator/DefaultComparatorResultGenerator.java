@@ -3,11 +3,15 @@ package io.cronox.delta.resultGenerator;
 import io.cronox.delta.comparators.DataSetComparator;
 import io.cronox.delta.helpers.CsvHelpers;
 import io.cronox.delta.models.DatasetExtract;
+import io.cronox.delta.models.TestCase;
 import lombok.var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 @Component
@@ -17,7 +21,7 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
     CsvHelpers csvHelpers;
 
     @Override
-    public String generate(DataSetComparator comp, String path) throws InterruptedException {
+    public String generate(DataSetComparator comp, TestCase test, String path) throws InterruptedException, IOException {
         File f = Paths.get(path).toAbsolutePath().toFile();
         if (!f.exists()) {
             var mkd = f.mkdirs();
@@ -60,6 +64,15 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
             target_duplicates_thread = new Thread(target_duplicates_runnable);
             target_duplicates_thread.start();
         }
+
+        BufferedWriter srcWriter = new BufferedWriter(new FileWriter(new File(f, "source.query")));
+        srcWriter.write(test.getSourceQuery());
+        srcWriter.close();
+
+        BufferedWriter tgtWriter = new BufferedWriter(new FileWriter(new File(f, "target.query")));
+        tgtWriter.write(test.getTargetQuery());
+        tgtWriter.close();
+
         if(matched_thread != null)
             matched_thread.join();
         if(source_mismatch_thread != null)

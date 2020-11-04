@@ -103,7 +103,7 @@ public class TestCaseExecutor {
 		var eot_gen_start = Instant.now();
 		var resultPath = path.concat(test.getId());
 		if(test.getId().equals("QuickTest"))
-			resultPath.concat("_" + LocalDateTime.now().format(f).replace(':', '_'));
+			resultPath = resultPath.concat("_" + LocalDateTime.now().format(f).replace(':', '_'));
 		String eot = generator.generate(comparator, test, resultPath);
 		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
 		helper.print("Evidence generation took " + helper.getInfoMessage(Long.toString(eot_gen_timeElapsed.toMillis())) + " milliseconds");

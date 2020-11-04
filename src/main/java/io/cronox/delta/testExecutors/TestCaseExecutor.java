@@ -17,19 +17,21 @@ import io.cronox.delta.models.TestCase;
 import io.cronox.delta.observers.LoadingObserver;
 import io.cronox.delta.observers.ProgressObserver;
 import io.cronox.delta.resultGenerator.ResultGenerator;
+import lombok.Getter;
 import lombok.var;
 
 //Should be used only once per Test
 public class TestCaseExecutor {
 
+	@Getter
 	private final DataSetComparator comparator;
 	
 	private final CellFactory factory;
 	
 	TestCase test;
-	
+
 	private DataSetGenerator sourceDataSetGenerator;
-	
+
 	private DataSetGenerator targetDataSetGenerator;
 	
 	ShellHelper helper;
@@ -99,7 +101,10 @@ public class TestCaseExecutor {
 		ResultGenerator generator = BeanUtil.getBean(comparator.getResultGenerator());
 		DateTimeFormatter f = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 		var eot_gen_start = Instant.now();
-		String eot = generator.generate(comparator, test, path.concat(test.getId()+LocalDateTime.now().format(f).replace(':', '_')));
+		var resultPath = path.concat(test.getId());
+		if(test.getId().equals("QuickTest"))
+			resultPath.concat("_" + LocalDateTime.now().format(f).replace(':', '_'));
+		String eot = generator.generate(comparator, test, resultPath);
 		var eot_gen_timeElapsed = Duration.between(eot_gen_start, Instant.now());
 		helper.print("Evidence generation took " + helper.getInfoMessage(Long.toString(eot_gen_timeElapsed.toMillis())) + " milliseconds");
 		return eot;

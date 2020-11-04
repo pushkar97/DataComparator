@@ -33,7 +33,7 @@ public class TestExecutionCommands {
 
 	Connections connections;
 
-	public DefaultComparator previousExecutionResult;
+	public TestCaseExecutor previousExecutionResult;
 
 	public TestExecutionCommands(ShellHelper helper,
 								 Connections connections,
@@ -51,7 +51,8 @@ public class TestExecutionCommands {
 							@ShellOption(value = {"-ml", "--mismatchLimit"}, defaultValue="0") int limit,
 							@ShellOption(value = {"-mr", "--maxRows"}, defaultValue="-1") int maxRows,
 							@ShellOption(value = {"-f", "--fetch"}, defaultValue="-1") int fetchSize,
-							@ShellOption(value = {"-ne", "--noEvidence"}) boolean noEvidence)
+							@ShellOption(value = {"-ne", "--noEvidence"}) boolean noEvidence,
+							@ShellOption(value = {"-id", "--testId"}, defaultValue="QuickTest") String testId)
 			throws IOException, InterruptedException {
 
 		var sourceFile = new File(sq);
@@ -73,7 +74,7 @@ public class TestExecutionCommands {
 			tq = new String(Files.readAllBytes(Paths.get(targetFile.getAbsolutePath())));
 		}
 
-		TestCase tempTest = new TestCase("QuickTest");
+		TestCase tempTest = new TestCase(testId);
 		if(connections.contains(sc)) {
 			DataSourceConnection source_connection = connections.get(sc);
 			source_connection.setMaxRows(maxRows);
@@ -101,13 +102,19 @@ public class TestExecutionCommands {
 		TestCaseExecutor ex = new TestCaseExecutor(tempTest, comparator);
 
 		ex.execute();
-		previousExecutionResult = comparator;
+		previousExecutionResult = ex;
 
 		if(!noEvidence) {
 			String path = ex.generateEoT();
 			return helper.getSuccessMessage("Test executed Successfully. Find results at : " + path);
 		}
 		return helper.getSuccessMessage("Test executed Successfully.");
+	}
+
+	@ShellMethod(value = "Generate Evidence of previously executed test", key = {"evd", "generateEvidence"})
+	public String generateEvidence() throws IOException, InterruptedException {
+		String path = previousExecutionResult.generateEoT();
+		return helper.getSuccessMessage("Find results at : " + path);
 	}
 
 	@ShellMethod(value = "peek data of previously executed test")
@@ -117,23 +124,23 @@ public class TestExecutionCommands {
 
 		var reports = Arrays.stream(reportsArg.split(" ")).map(ReportType::valueOf).collect(Collectors.toCollection(HashSet::new));
 		if(reports.contains(ReportType.MATCHED)) {
-			var data = previousExecutionResult.getMatched();
+			var data = previousExecutionResult.getComparator().getMatched();
 			cliTableHelper.printDataTable(data, ReportType.MATCHED.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.SOURCE_MISMATCH)) {
-			var data = previousExecutionResult.getSet1();
+			var data = previousExecutionResult.getComparator().getSet1();
 			cliTableHelper.printDataTable(data, ReportType.SOURCE_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.TARGET_MISMATCH)) {
-			var data = previousExecutionResult.getSet2();
+			var data = previousExecutionResult.getComparator().getSet2();
 			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DATA, borderStyle);
 		}
 		if(reports.contains(ReportType.SOURCE_DUPLICATE)) {
-			var data = previousExecutionResult.getSet1();
+			var data = previousExecutionResult.getComparator().getSet1();
 			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES, borderStyle);
 		}
 		if(reports.contains(ReportType.TARGET_DUPLICATE)) {
-			var data = previousExecutionResult.getSet2();
+			var data = previousExecutionResult.getComparator().getSet2();
 			cliTableHelper.printDataTable(data, ReportType.TARGET_MISMATCH.toString(), max, DatasetExtract.DUPLICATES,borderStyle);
 		}
 	}

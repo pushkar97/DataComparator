@@ -34,7 +34,7 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
         Thread target_mismatch_thread = null;
         Thread source_duplicates_thread = null;
         Thread target_duplicates_thread = null;
-
+        Thread queries = null;
         if(comp.getMatched().size() != 0) {
             Runnable matched_runnable = () -> csvHelpers.datasetToCsv(comp.getMatched(), new File(f, "matched.csv"), DatasetExtract.DATA);
             matched_thread = new Thread(matched_runnable);
@@ -64,14 +64,24 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
             target_duplicates_thread = new Thread(target_duplicates_runnable);
             target_duplicates_thread.start();
         }
+        queries = new Thread(() -> {
+            try (var srcWriter = new BufferedWriter(new FileWriter(new File(f, "source.query")))){
+                srcWriter.write(test.getSourceQuery());
+            } catch (IOException e) { e.printStackTrace(); }
+            try (var tgtWriter = new BufferedWriter(new FileWriter(new File(f, "target.query")))){
+                tgtWriter.write(test.getTargetQuery());
+            } catch (IOException e) { e.printStackTrace(); }
+        });
+        queries.start();
 
-        BufferedWriter srcWriter = new BufferedWriter(new FileWriter(new File(f, "source.query")));
-        srcWriter.write(test.getSourceQuery());
-        srcWriter.close();
 
-        BufferedWriter tgtWriter = new BufferedWriter(new FileWriter(new File(f, "target.query")));
-        tgtWriter.write(test.getTargetQuery());
-        tgtWriter.close();
+        try(var reportWriter = new BufferedWriter(new FileWriter(new File(f, "report.sh")))){
+            reportWriter.write("MATCHED=" + comp.getMatched().size());
+            reportWriter.write("\nSOURCE_MISMATCH=" + comp.getSet1().size());
+            reportWriter.write("\nTARGET_MISMATCH=" + comp.getSet2().size());
+            reportWriter.write("\nSOURCE_DUPLICATES=" + comp.getSet1().getDuplicates().size());
+            reportWriter.write("\nTARGET_DUPLICATES=" + comp.getSet2().getDuplicates().size());
+        }
 
         if(matched_thread != null)
             matched_thread.join();
@@ -86,5 +96,4 @@ public class DefaultComparatorResultGenerator implements ResultGenerator {
 
         return f.getAbsolutePath();
     }
-
 }

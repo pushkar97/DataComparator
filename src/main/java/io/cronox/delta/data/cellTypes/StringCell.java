@@ -1,17 +1,24 @@
 package io.cronox.delta.data.cellTypes;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.math.BigDecimal;
+
 public class StringCell implements Cell {
 
-	private String value;
+	private final String value;
 	
 	public StringCell(String value) {
 		this.value = value;
 	}
 	
 	@Override
-	public int compareTo(Cell o) {
+	public int compareTo(@NotNull Cell o) {
 		if (o instanceof StringCell)
 			return this.compareTo((StringCell) o);
+
+		if (o instanceof BigDecimalCell)
+			return new BigDecimal(this.value).toPlainString().compareTo(((BigDecimalCell)o).getValue().toPlainString());
 
 		return this.toString().compareTo(o.toString());
 	}

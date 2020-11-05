@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>io.cronox</groupId>
 	<artifactId>delta</artifactId>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 	<name>delta</name>
 	<description>data change capture</description>
 	<packaging>jar</packaging>
